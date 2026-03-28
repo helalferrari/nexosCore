@@ -3,12 +3,14 @@ package com.hfc.nexosCore.models.entities;
 import com.hfc.nexosCore.models.enums.Guardianship;
 import com.hfc.nexosCore.models.enums.MaritalStatus;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "patients")
+@Table(name = "patients", indexes = @Index(name = "idx_patient_cpf", columnList = "cpf"))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,6 +38,10 @@ public class Patient {
 
     private String fullName;
     private LocalDate birthDate;
+
+    @Column(unique = true, nullable = false)
+    private String cpf;
+
     private String schoolName;
     private String grade;
 

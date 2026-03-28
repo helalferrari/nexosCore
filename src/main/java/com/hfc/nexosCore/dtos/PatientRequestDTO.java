@@ -19,6 +19,9 @@ public record PatientRequestDTO(
         @Past(message = "Birth date must be in the past")
         LocalDate birthDate,
 
+        @NotBlank(message = "CPF is required")
+        String cpf,
+
         @Size(max = 100, message = "School name must not exceed 100 characters")
         String schoolName,
 
