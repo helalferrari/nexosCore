@@ -3,17 +3,20 @@
 Este arquivo define as regras e convenções específicas para o desenvolvimento do backend Nexos. Ele estende e aplica as diretrizes definidas no arquivo `GEMINI.md` global.
 
 ## Stack Tecnológico Principal
-*   **Linguagem:** Java (Verificar a versão do projeto no build.gradle)
-*   **Framework:** Spring Boot
+*   **Linguagem:** Java 21
+*   **Framework:** Spring Boot 3.2.4
 *   **Build Tool:** Gradle
+*   **Banco de Dados:** PostgreSQL (Docker porta 5434)
 
-## Padrões Arquiteturais e de Design
-*   **Camadas (Exemplo de Padrão - A Definir pela Equipe):**
-    *   `controllers`: Lida com requisições HTTP, validação de entrada e retorno de DTOs.
-    *   `services`: Contém a regra de negócio central.
-    *   `repositories`: Acesso a dados (Spring Data JPA ou afins).
-    *   `models/entities`: Entidades de banco de dados.
-    *   `dtos`: Objetos de Transferência de Dados para entrada e saída de APIs.
+## Padrões de Mensageria (Kafka)
+*   **Papel:** Produtor de eventos.
+*   **Tópicos:** `patient-created-topic`.
+*   **Serialização:** `JsonSerializer`.
+*   **Chave de Partição:** `patientId` (UUID string) para garantir ordem por paciente.
+
+## Padrões Arquiteturais
+*   **Persistência:** Entidades devem ser persistidas via `JpaRepository` antes do disparo de eventos Kafka (Padrão Transactional).
+*   **Camadas:** Controller -> Service (@Transactional) -> Repository.
 *   **Injeção de Dependências:** Utilize injeção via construtor (preferencialmente usando Lombok `@RequiredArgsConstructor` se o projeto utilizar Lombok) em vez de `@Autowired` em campos.
 *   **Nomenclatura:** Padrão Java (CamelCase para variáveis/métodos, PascalCase para Classes). Interfaces costumam não ter o prefixo 'I' ou sufixo 'Interface'. Implementações usam o sufixo 'Impl' se necessário.
 

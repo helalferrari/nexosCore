@@ -3,6 +3,7 @@ plugins {
         id 'org.springframework.boot' version '3.2.4'
         id 'io.spring.dependency-management' version '1.1.7'
         id "org.sonarqube" version '7.1.0.6387'
+        id 'jacoco'
 }
 
 group = 'com.hfc'
@@ -28,15 +29,39 @@ dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
+        implementation 'org.springframework.kafka:spring-kafka'
+        
         compileOnly 'org.projectlombok:lombok'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
         runtimeOnly 'org.postgresql:postgresql'
         annotationProcessor 'org.projectlombok:lombok'
+        
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
         testRuntimeOnly 'com.h2database:h2'
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+jacoco {
+    toolVersion = "0.8.11"
+}
+
 tasks.named('test') {
         useJUnitPlatform()
+        finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml"
+    }
 }
