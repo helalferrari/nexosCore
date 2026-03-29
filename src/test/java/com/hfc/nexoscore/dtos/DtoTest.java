@@ -31,8 +31,9 @@ class DtoTest {
                 "Mother", 35, "PhD", "Doctor", "Portuguese", 1,
                 MaritalStatus.MARRIED, Guardianship.BOTH
         );
-        assertThat(dto).isEqualTo(sameDto);
-        assertThat(dto.hashCode()).isEqualTo(sameDto.hashCode());
+        assertThat(dto)
+                .isEqualTo(sameDto)
+                .hasSameHashCodeAs(sameDto);
     }
 
     @Test

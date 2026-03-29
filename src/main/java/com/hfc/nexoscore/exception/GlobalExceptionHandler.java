@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String TIMESTAMP_KEY = "timestamp";
+
     /**
      * Tratamento para recursos não encontrados (404 Not Found).
      */
@@ -31,7 +33,7 @@ public class GlobalExceptionHandler {
         log.warn("Recurso não encontrado: {}", ex.getMessage());
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problemDetail.setTitle("Recurso não encontrado");
-        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty(TIMESTAMP_KEY, Instant.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
     }
 
@@ -43,7 +45,7 @@ public class GlobalExceptionHandler {
         log.warn("Falha em regra de negócio: {}", ex.getMessage());
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setTitle("Violação de regra de negócio");
-        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty(TIMESTAMP_KEY, Instant.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
@@ -64,7 +66,7 @@ public class GlobalExceptionHandler {
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Um ou mais campos estão inválidos.");
         problemDetail.setTitle("Erro de validação");
-        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty(TIMESTAMP_KEY, Instant.now());
         problemDetail.setProperty("invalidFields", errors);
         
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
@@ -83,7 +85,7 @@ public class GlobalExceptionHandler {
                 "Ocorreu um erro interno inesperado no servidor. Por favor, tente novamente mais tarde."
         );
         problemDetail.setTitle("Erro interno no servidor");
-        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setProperty(TIMESTAMP_KEY, Instant.now());
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetail);
     }

@@ -79,16 +79,18 @@ class PatientModelTest {
         Patient p1 = Patient.builder().id(UUID.randomUUID()).cpf("123").build();
         Patient p2 = Patient.builder().id(p1.getId()).cpf("123").build();
 
-        assertThat(p1).isEqualTo(p2);
-        assertThat(p1.hashCode()).isEqualTo(p2.hashCode());
-        assertThat(p1.toString()).contains("123");
+        assertThat(p1)
+                .isEqualTo(p2)
+                .hasSameHashCodeAs(p2)
+                .extracting(Object::toString).asString().contains("123");
 
         Medication m1 = Medication.builder().name("Med").build();
         Medication m2 = Medication.builder().name("Med").build();
 
-        assertThat(m1).isEqualTo(m2);
-        assertThat(m1.hashCode()).isEqualTo(m2.hashCode());
-        assertThat(m1.toString()).contains("Med");
+        assertThat(m1)
+                .isEqualTo(m2)
+                .hasSameHashCodeAs(m2)
+                .extracting(Object::toString).asString().contains("Med");
         
         m1.setReason("Reason");
         m1.setDosage("10mg");
