@@ -1,6 +1,8 @@
 package com.hfc.nexosCore.services;
 
 import com.hfc.nexosCore.dtos.PatientCreatedEvent;
+import com.hfc.nexosCore.exception.BusinessRuleException;
+import com.hfc.nexosCore.exception.ResourceNotFoundException;
 import com.hfc.nexosCore.models.entities.Patient;
 import com.hfc.nexosCore.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,6 +25,14 @@ public class PatientService {
 
     @Transactional
     public UUID createPatient(String fullName, String cpf) {
+        log.info("Iniciando criação de paciente: {}", fullName);
+        
+        // Regra de Negócio: Verificar se o CPF já está cadastrado
+        if (patientRepository.findByCpf(cpf).isPresent()) {
+            log.warn("Tentativa de cadastro com CPF já existente: {}", cpf);
+            throw new BusinessRuleException("Já existe um paciente cadastrado com este CPF.");
+        }
+
         // Persistência real da entidade no banco de dados PostgreSQL do NexosCore
         Patient patient = Patient.builder()
                 .fullName(fullName)
@@ -41,5 +52,10 @@ public class PatientService {
         log.info("Evento publicado no Kafka: {}", event);
 
         return patientId;
+    }
+
+    public Patient getPatientById(UUID id) {
+        return patientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + id));
     }
 }

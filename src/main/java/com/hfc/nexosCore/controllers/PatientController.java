@@ -3,6 +3,7 @@ package com.hfc.nexosCore.controllers;
 import com.hfc.nexosCore.dtos.PatientRequest;
 import com.hfc.nexosCore.services.PatientService;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class PatientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UUID createPatient(@RequestBody PatientRequest request) {
+    public UUID createPatient(@Valid @RequestBody PatientRequest request) {
         return patientService.createPatient(request.fullName(), request.cpf());
     }
 }
